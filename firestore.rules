@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: history
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (required) - UID of the user
+    //   - type: string (required, ['text', 'image', 'code']) - Type of analysis
+    //   - input: string (required) - Input content or metadata
+    //   - trustScore: number (required, 0-100) - Trust score
+    //   - findings: string (required) - Analysis findings
+    //   - suggestions: string (required) - Suggested improvements
+    //   - confidence: number (required, 0-1) - AI confidence
+    //   - timestamp: timestamp (required) - When the analysis was performed
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidHistory(data) {
+      return data.keys().hasAll(['userId', 'type', 'input', 'trustScore', 'findings', 'suggestions', 'confidence', 'timestamp']) &&
+             data.userId is string &&
+             data.type in ['text', 'image', 'code'] &&
+             data.input is string &&
+             data.trustScore is number && data.trustScore >= 0 && data.trustScore <= 100 &&
+             data.findings is string &&
+             data.suggestions is string &&
+             data.confidence is number && data.confidence >= 0 && data.confidence <= 1 &&
+             data.timestamp is timestamp;
+    }
+
+    match /history/{historyId} {
+      // Users can only read their own history
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      
+      // Users can only create history for themselves
+      allow create: if isAuthenticated() && 
+                    request.auth.uid == request.resource.data.userId &&
+                    isValidHistory(request.resource.data);
+      
+      // History is immutable for users
+      allow update, delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

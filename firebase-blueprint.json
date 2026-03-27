@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "AnalysisHistory": {
+      "title": "Analysis History",
+      "description": "Stores previous analyses performed by the user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The UID of the user who performed the analysis." },
+        "type": { "type": "string", "enum": ["text", "image", "code"], "description": "The type of analysis performed." },
+        "input": { "type": "string", "description": "The input data (text, code, or image URL/metadata)." },
+        "trustScore": { "type": "number", "description": "The calculated trust score." },
+        "findings": { "type": "string", "description": "The analysis findings." },
+        "suggestions": { "type": "string", "description": "The suggested improvements." },
+        "confidence": { "type": "number", "description": "The AI's confidence score." },
+        "timestamp": { "type": "string", "format": "date-time", "description": "When the analysis was performed." }
+      },
+      "required": ["userId", "type", "input", "trustScore", "findings", "suggestions", "confidence", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/history/{historyId}": {
+      "schema": "AnalysisHistory",
+      "description": "Collection of analysis history records."
+    }
+  }
+}

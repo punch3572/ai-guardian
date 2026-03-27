@@ -1,0 +1,7 @@
+{
+  "name": "AI Guardian",
+  "description": "A Multimodal AI Trust & Safety Platform for analyzing text, images, and code for hallucinations, deepfakes, and bugs.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
