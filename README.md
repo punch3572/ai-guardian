@@ -15,7 +15,7 @@ Welcome to the **AI Guardian** platform! This app is designed to analyze digital
 
 # Quick Start the App By just clicking the link:
 
-**Link to open AI-Guardian App**:
+**Link to open AI-Guardian App**:https://ai.studio/apps/b0b1c24c-cc6a-47e8-bbd5-a8cd16b70a49?fullscreenApplet=true
 
 
 # TO RUN THE CODE FROM [VS CODE]:
