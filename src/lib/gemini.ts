@@ -1,8 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 // Initialize the Gemini SDK
-// process.env.GEMINI_API_KEY is injected by the platform
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY as string });
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  console.error("GEMINI_API_KEY is missing. Please set it in your .env file.");
+}
+
+const ai = new GoogleGenAI({ apiKey: apiKey as string });
 
 export interface AnalysisResult {
   trustScore: number;
@@ -114,6 +119,54 @@ export async function analyzeImage(base64Image: string, mimeType: string): Promi
     return JSON.parse(jsonStr);
   } catch (e) {
     console.error("Failed to parse image analysis JSON:", text);
+    throw new Error("Invalid response format from AI");
+  }
+}
+
+export async function detectAIContent(text: string): Promise<any> {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `You are an AI content detection assistant.
+
+Your task is to analyze the given text and determine whether it is:
+1) AI-generated
+2) Human-written
+
+Analyze based on the following factors:
+- Writing style consistency
+- Repetition or redundancy
+- Use of complex or generic phrases
+- Emotional depth and personal touch
+- Sentence structure variation
+- Predictability of language
+
+Instructions:
+- Carefully examine the text.
+- Provide a probability score (0–100%) for AI-generated likelihood.
+- Clearly classify the text as "AI-generated" or "Human-written".
+- Give a short explanation (2–4 lines) supporting your decision.
+
+Output format:
+{
+  "prediction": "AI-generated / Human-written",
+  "confidence": "XX%",
+  "reason": "Brief explanation here"
+}
+
+Text to analyze:
+"""
+${text}
+"""
+Return ONLY the JSON object.`
+  });
+
+  const resText = response.text;
+  try {
+    const jsonMatch = resText.match(/\{[\s\S]*\}/);
+    const jsonStr = jsonMatch ? jsonMatch[0] : resText;
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    console.error("Failed to parse AI detection JSON:", resText);
     throw new Error("Invalid response format from AI");
   }
 }

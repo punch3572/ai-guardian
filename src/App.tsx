@@ -3,22 +3,28 @@ import { motion, AnimatePresence } from "motion/react";
 import { TextAnalyzer } from "./components/TextAnalyzer";
 import { ImageAnalyzer } from "./components/ImageAnalyzer";
 import { CodeAnalyzer } from "./components/CodeAnalyzer";
+import { AIContentDetector } from "./components/AIContentDetector";
 import { History } from "./components/History";
-import { Shield, FileText, Image as ImageIcon, Code2, Info, Github, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { PrivacyPolicy } from "./components/PrivacyPolicy";
+import { TermsOfService } from "./components/TermsOfService";
+import { Documentation } from "./components/Documentation";
+import { Shield, FileText, Image as ImageIcon, Code2, Info, Github, LogIn, LogOut, User as UserIcon, Bot, Clock, RefreshCw } from "lucide-react";
 import { cn } from "./lib/utils";
 import { useAuth } from "./lib/AuthContext";
 
-type Tab = "text" | "image" | "code";
+type Tab = "text" | "image" | "code" | "detection" | "history" | "privacy" | "terms" | "docs";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>("text");
+  const [activeTab, setActiveTab] = useState<Tab>("detection");
   const [selectedHistory, setSelectedHistory] = useState<any>(null);
-  const { user, login, logout, loading } = useAuth();
+  const { user, login, logout, switchAccount, loading } = useAuth();
 
   const tabs = [
-    { id: "text", label: "Text Analysis", icon: FileText },
+    { id: "detection", label: "AI Detection", icon: Bot },
     { id: "image", label: "Image Analysis", icon: ImageIcon },
+    { id: "text", label: "Text Analysis", icon: FileText },
     { id: "code", label: "Code Debugger", icon: Code2 },
+    { id: "history", label: "Recent Activity", icon: Clock },
   ];
 
   const handleHistorySelect = (item: any) => {
@@ -65,9 +71,14 @@ export default function App() {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col items-end">
                   <span className="text-xs font-bold truncate max-w-[100px]">{user.displayName}</span>
-                  <button onClick={logout} className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1">
-                    <LogOut className="w-2 h-2" /> Sign Out
-                  </button>
+                  <div className="flex gap-2">
+                    <button onClick={switchAccount} className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-1">
+                      <RefreshCw className="w-2 h-2" /> Switch
+                    </button>
+                    <button onClick={logout} className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1">
+                      <LogOut className="w-2 h-2" /> Sign Out
+                    </button>
+                  </div>
                 </div>
                 {user.photoURL ? (
                   <img src={user.photoURL} alt="Avatar" className="w-8 h-8 rounded-full border border-border" />
@@ -137,18 +148,25 @@ export default function App() {
                 {activeTab === "text" && <TextAnalyzer selectedHistory={selectedHistory} />}
                 {activeTab === "image" && <ImageAnalyzer selectedHistory={selectedHistory} />}
                 {activeTab === "code" && <CodeAnalyzer selectedHistory={selectedHistory} />}
+                {activeTab === "detection" && <AIContentDetector selectedHistory={selectedHistory} />}
+                {activeTab === "history" && (
+                  <div className="bg-card p-8 rounded-2xl border border-border shadow-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Clock className="w-6 h-6 text-primary" />
+                      <h2 className="text-2xl font-bold">Recent Activity</h2>
+                    </div>
+                    <History onSelect={handleHistorySelect} />
+                  </div>
+                )}
+                {activeTab === "privacy" && <PrivacyPolicy />}
+                {activeTab === "terms" && <TermsOfService />}
+                {activeTab === "docs" && <Documentation />}
               </motion.div>
             </AnimatePresence>
           </div>
 
           {/* Sidebar Info */}
           <div className="lg:col-span-4 space-y-6">
-            {user && (
-              <div className="bg-card p-6 rounded-xl border border-border">
-                <History onSelect={handleHistorySelect} />
-              </div>
-            )}
-
             <div className="bg-card p-6 rounded-xl border border-border">
               <div className="flex items-center gap-2 mb-4">
                 <Info className="w-5 h-5 text-primary" />
@@ -197,9 +215,9 @@ export default function App() {
             <span className="text-sm">© 2026 AI Guardian Platform</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Documentation</a>
+            <button onClick={() => setActiveTab("privacy")} className="hover:text-foreground transition-colors">Privacy</button>
+            <button onClick={() => setActiveTab("terms")} className="hover:text-foreground transition-colors">Terms</button>
+            <button onClick={() => setActiveTab("docs")} className="hover:text-foreground transition-colors">Documentation</button>
           </div>
         </div>
       </footer>

@@ -82,9 +82,11 @@ export function ImageAnalyzer({ selectedHistory }: { selectedHistory?: any }) {
   return (
     <div className="space-y-6">
       <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <ImageIcon className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-semibold">Image Analysis</h2>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <ImageIcon className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-semibold">Image Analysis</h2>
+          </div>
         </div>
         <p className="text-muted-foreground text-sm mb-6">
           Detect deepfakes, AI generation, and suspicious artifacts.

@@ -1,30 +1,50 @@
-# key Featurs of this app are:
-It has the many features of the AI which can help us in the real world problem solveing.
+# 🛡️ AI Guardian - Hackathon Edition
 
-**FEATURES**:
+Welcome to the **AI Guardian** platform! This app is designed to analyze digital content (Text, Images, Code) for trust, safety, and authenticity using Google's Gemini models.
 
-**1**.It has **Text analysis** (if we enter a text it will check for hallucinations,misinformations,or harmful content and gives us the trust score based on it's report).
+## 🚀 Quick Start (VS Code)
 
-**2**.It has the **Image analysis** ( If we upload a picture,it Detect deepfakes, AI generation, and suspicious artifacts in the picture and gives us the result).
+Follow these steps to get the app running locally and win that hackathon!
 
-**3**.It has the **Code Debugger**( If we provide a code,it Detect bugs, security vulnerabilities, and logic errors in your code).
+### 1. Prerequisites
+- **Node.js**: Ensure you have Node.js 18+ installed.
+- **Gemini API Key**: Get one from [Google AI Studio](https://aistudio.google.com/app/apikey).
+- **Firebase Project**: Create a project at [Firebase Console](https://console.firebase.google.com/).
 
-**4**.This App also stores our recent analysis in it if we signup with our google account.
+### 2. Installation
+Open your terminal in the project folder and run:
+```bash
+npm install
+```
 
+### 3. Configuration
+Create a `.env` file in the root directory:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+PORT=3000
+```
 
-# Run and deploy your AI Guardian app
+### 4. Firebase Setup
+1.  Add a **Web App** to your Firebase project.
+2.  Copy the configuration object and save it as `firebase-applet-config.json` in the root folder.
+3.  Enable **Google Authentication** in the Firebase Auth tab.
+4.  Create a **Firestore Database** (Enterprise mode) and set rules to allow read/write for authenticated users.
 
-This contains everything you need to run your app locally.
+### 5. Run the App
+```bash
+npm run dev
+```
+The app will be available at **`http://localhost:3000`**.
 
-View your app in AI Studio: https://ai.studio/apps/b0b1c24c-cc6a-47e8-bbd5-a8cd16b70a49
+## 🛠️ Tech Stack
+- **Frontend**: React 19, Tailwind CSS 4, Motion (Animations), Lucide Icons.
+- **Backend**: Express.js, Vite Middleware.
+- **AI**: Google Gemini 3 Flash (Text/Code), Gemini 2.5 Flash (Image).
+- **Database/Auth**: Firebase Firestore & Google Auth.
 
-## Run Locally
+## 🏆 Hackathon Tips
+- **Demo Data**: Use the "Try demo data" buttons in the app to showcase the AI's capabilities quickly.
+- **Real-time History**: Show how the app saves analysis history to Firestore in real-time.
+- **Responsive Design**: The app is fully responsive—show it on both desktop and mobile views!
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Good luck with the hackathon! 🚀

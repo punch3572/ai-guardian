@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db, collection, query, where, orderBy, onSnapshot, handleFirestoreError, OperationType } from "../lib/firebase";
 import { useAuth } from "../lib/AuthContext";
 import { TrustScore } from "./TrustScore";
-import { FileText, Image as ImageIcon, Code2, Clock, ChevronRight } from "lucide-react";
+import { FileText, Image as ImageIcon, Code2, Clock, ChevronRight, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../lib/utils";
 
@@ -61,6 +61,7 @@ export function History({ onSelect }: { onSelect: (item: HistoryItem) => void })
     text: FileText,
     image: ImageIcon,
     code: Code2,
+    detection: Bot,
   };
 
   return (
@@ -81,8 +82,8 @@ export function History({ onSelect }: { onSelect: (item: HistoryItem) => void })
       ) : (
         <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 no-scrollbar">
           <AnimatePresence>
-            {history.map((item) => {
-              const Icon = icons[item.type];
+            {history.map((item: any) => {
+              const Icon = icons[item.type as keyof typeof icons] || FileText;
               return (
                 <motion.button
                   key={item.id}
@@ -97,15 +98,27 @@ export function History({ onSelect }: { onSelect: (item: HistoryItem) => void })
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-1">
-                        <span className="text-xs font-bold uppercase tracking-tighter text-muted-foreground">{item.type}</span>
+                        <span className="text-xs font-bold uppercase tracking-tighter text-muted-foreground">
+                          {item.type === 'detection' ? 'Detection' : item.type}
+                        </span>
                         <span className="text-[10px] text-muted-foreground">
                           {item.timestamp?.toDate().toLocaleDateString()}
                         </span>
                       </div>
                       <p className="text-sm font-medium truncate mb-2">
-                        {item.type === 'image' ? 'Image Analysis' : item.input}
+                        {item.type === 'image' ? 'Image Analysis' : item.type === 'detection' ? item.prediction : item.input}
                       </p>
-                      <TrustScore score={item.trustScore} size="sm" />
+                      {item.type === 'detection' ? (
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            item.prediction === "AI-generated" ? "bg-red-500" : "bg-green-500"
+                          )} />
+                          <span className="text-[10px] font-medium">{item.confidence}</span>
+                        </div>
+                      ) : (
+                        <TrustScore score={item.trustScore} size="sm" />
+                      )}
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground self-center opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
